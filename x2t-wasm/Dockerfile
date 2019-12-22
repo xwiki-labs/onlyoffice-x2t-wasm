@@ -2,7 +2,7 @@
 # https://helpcenter.onlyoffice.com/server/linux/document/compile-source-code.aspx,
 # which hallows to build the complete OnlyOffice Document Server
 # We tweak it a bit so that we build only the tool that we are looking for (x2t) 
-from ubuntu:bionic
+from ubuntu:xenial
 
 run apt-get update
 run apt-get install --force-yes -yq \
@@ -67,8 +67,13 @@ RUN echo "## Start building" \
             file \
             python python-pip \
             python3 python3-pip \
+            curl \
     \
 &&  echo "## Done"
+
+# Install node 13
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash -
+RUN apt-get install -y nodejs
 
 RUN  echo "## Get EMSDK" \
     &&  git clone https://github.com/emscripten-core/emsdk.git ${EMSDK} \
@@ -165,7 +170,6 @@ RUN echo "## Pre-populate cache" \
     &&  echo "## Done"
 
 # Test emsdk
-RUN apt-get -y install nodejs
 RUN . ${EMSDK}/emsdk_set_env.sh  \
     && emcc --version \
     && mkdir -p /tmp/emscripten_test && cd /tmp/emscripten_test \

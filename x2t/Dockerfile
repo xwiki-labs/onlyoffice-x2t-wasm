@@ -2,7 +2,7 @@
 # https://helpcenter.onlyoffice.com/server/linux/document/compile-source-code.aspx,
 # which hallows to build the complete OnlyOffice Document Server
 # We tweak it a bit so that we build only the tool that we are looking for (x2t) 
-from ubuntu:bionic
+from ubuntu:xenial
 
 run apt-get update
 run apt-get install --force-yes -yq \
