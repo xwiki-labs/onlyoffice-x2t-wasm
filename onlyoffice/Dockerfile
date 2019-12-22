@@ -2,7 +2,7 @@
 # https://helpcenter.onlyoffice.com/server/linux/document/compile-source-code.aspx,
 # which hallows to build the complete OnlyOffice Document Server
 # We tweak it a bit so that we build only the tool that we are looking for (x2t) 
-from ubuntu:trusty
+from ubuntu:bionic
 
 run apt-get update
 run apt-get install --force-yes -yq \
@@ -34,16 +34,5 @@ run echo "x2t: \$(X2T)" >> core/Makefile
 # Check the file contents
 run tail core/Makefile
 
-run cd core && make x2t
-
-# We now have a working build of x2t for amd64 ; let's port it to WebAssembly
-# Download the Emscripten sdk
-run git clone https://github.com/emscripten-core/emsdk.git
-run cd emsdk && ./emsdk install sdk-upstream-incoming-64bit
-run cd emsdk && ./emsdk activate sdk-upstream-incoming-64bit
-run echo "a" > toto
-run /bin/bash -c "source ./emsdk/emsdk_env.sh && cd core && ../emsdk/upstream/emscripten/emmake make x2t"
-
-# At this point, check if 
-# * 3rdParty should be ported (probably)
+run cd core && make
 
