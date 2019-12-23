@@ -24,7 +24,9 @@ run apt-get install --force-yes -yq \
     git \
     subversion
 
-run git clone https://github.com/ONLYOFFICE/core.git
+# Use the ldubost OnlyOffice core with the wasm branch
+run git clone https://github.com/ldubost/core.git &&
+    cd core && git checkout wasm
 
 # Build the 3rd party dependencies
 run cd core/Common/3dParty && ./make.sh
@@ -41,7 +43,7 @@ run cd core && make x2t
 # ------------------------------------------------------------------------------
 
 # Supports only 1.38.40+, accpets also '-upstream' variants
-ARG EMSCRIPTEN_VERSION=1.38.43-upstream
+ARG EMSCRIPTEN_VERSION=1.39.4
 ARG EMSDK_CHANGESET=master
 
 # ------------------------------------------------------------------------------
@@ -68,6 +70,7 @@ RUN echo "## Start building" \
             python python-pip \
             python3 python3-pip \
             curl \
+            vim \
     \
 &&  echo "## Done"
 
@@ -179,4 +182,10 @@ RUN . ${EMSDK}/emsdk_set_env.sh  \
     && cd / \
     && rm -rf /tmp/emscripten_test \
 
-
+# Preparing emscripten build
+RUN update-alternatives --install /usr/bin/gcc gcc /emsdk/upstream/emscripten/emcc 20 \
+    && update-alternatives --install /usr/bin/g++ g++ /emsdk/upstream/emscripten/em++ 20 \
+    && update-alternatives --install /usr/bin/clang clang /emsdk/upstream/bin/clang 20 \
+    && update-alternatives --install /usr/bin/clang++ clang++ /emsdk/upstream/bin/clang++ 20 \
+    && update-alternatives --install /usr/bin/emar emar /emsdk/upstream/bin/llvm-ar 20
+RUN make x2t

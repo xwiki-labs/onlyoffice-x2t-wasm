@@ -9,7 +9,7 @@ from ubuntu:xenial
 # ------------------------------------------------------------------------------
 
 # Supports only 1.38.40+, accpets also '-upstream' variants
-ARG EMSCRIPTEN_VERSION=1.38.43-upstream
+ARG EMSCRIPTEN_VERSION=1.39.4
 ARG EMSDK_CHANGESET=master
 
 # ------------------------------------------------------------------------------
