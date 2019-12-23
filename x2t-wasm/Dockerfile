@@ -25,8 +25,8 @@ run apt-get install --force-yes -yq \
     subversion
 
 # Use the ldubost OnlyOffice core with the wasm branch
-run git clone https://github.com/ldubost/core.git &&
-    cd core && git checkout wasm
+run git clone https://github.com/ldubost/core.git \
+    && cd core && git checkout wasm
 
 # Build the 3rd party dependencies
 run cd core/Common/3dParty && ./make.sh
