@@ -26,17 +26,12 @@ run apt-get install --force-yes -yq \
 
 # Use the ldubost OnlyOffice core with the wasm branch
 run git clone https://github.com/ldubost/core.git \
-    && cd core && git checkout wasm
-
-# Build the 3rd party dependencies
-run cd core/Common/3dParty && ./make.sh
+    && cd core && git checkout wasm32-5.2.6
 
 # Add a target for the build only for x2t and its dependencies
 run echo "x2t: \$(X2T)" >> core/Makefile
 # Check the file contents
 run tail core/Makefile
-
-run cd core && make x2t
 
 # We now have a working build of x2t for amd64 ; let's port it to WebAssembly
 # Install emsdk
@@ -45,7 +40,6 @@ run cd core && make x2t
 # Supports only 1.38.40+, accpets also '-upstream' variants
 ARG EMSCRIPTEN_VERSION=1.39.4
 ARG EMSDK_CHANGESET=master
-
 # ------------------------------------------------------------------------------
 
 ENV EMSDK /emsdk
@@ -71,7 +65,7 @@ RUN echo "## Start building" \
             python3 python3-pip \
             curl \
             vim \
-    \
+            rc \ 
 &&  echo "## Done"
 
 # Install node 13
@@ -180,12 +174,26 @@ RUN . ${EMSDK}/emsdk_set_env.sh  \
     && em++ -O2 test.cpp -o test.js && nodejs test.js \
     && em++ test.cpp -o test.js && nodejs test.js \
     && cd / \
-    && rm -rf /tmp/emscripten_test \
+    && rm -rf /tmp/emscripten_test
+
+# Make sure we run the right code
+ARG VER=2
+RUN cd /core && git pull
+
+# Rebuild boost under wasm
+RUN rm -rf /core/Common/3dParty/boost/boost_1_58_0
+RUN cd /core/Common/3dParty/boost/ && ./fetch.sh && ./build.sh
+
+# Build the 3rd party dependencies
+RUN cd /core/Common/3dParty/icu && ./fetch.sh && ./build.sh
 
 # Preparing emscripten build
 RUN update-alternatives --install /usr/bin/gcc gcc /emsdk/upstream/emscripten/emcc 20 \
     && update-alternatives --install /usr/bin/g++ g++ /emsdk/upstream/emscripten/em++ 20 \
     && update-alternatives --install /usr/bin/clang clang /emsdk/upstream/bin/clang 20 \
     && update-alternatives --install /usr/bin/clang++ clang++ /emsdk/upstream/bin/clang++ 20 \
-    && update-alternatives --install /usr/bin/emar emar /emsdk/upstream/bin/llvm-ar 20
-RUN make x2t
+    && update-alternatives --install /usr/bin/ar ar /emsdk/upstream/bin/llvm-ar 20 \
+    && update-alternatives --install /usr/bin/rc rc /emsdk/upstream/bin/llvm-rc 20
+RUN cd /core && make x2t
+# Final WebAssembly Build
+RUN cd /core && ./make.sh
