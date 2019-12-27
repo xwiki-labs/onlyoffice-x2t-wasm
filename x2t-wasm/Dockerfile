@@ -177,12 +177,12 @@ RUN . ${EMSDK}/emsdk_set_env.sh  \
     && rm -rf /tmp/emscripten_test
 
 # Make sure we run the right code
-ARG VER=2
+ARG VER=3
 RUN cd /core && git pull
 
 # Rebuild boost under wasm
 RUN rm -rf /core/Common/3dParty/boost/boost_1_58_0
-RUN cd /core/Common/3dParty/boost/ && ./fetch.sh && ./build.sh
+RUN cd /core/Common/3dParty/boost/ && ./fetch.sh && ./build.sh && /emsdk/upstream/bin/llvm-ranlib /core/Common/3dParty/boost/boost_1_58_0/build/linux_32/static/libboost_regex.a
 
 # Build the 3rd party dependencies
 RUN cd /core/Common/3dParty/icu && ./fetch.sh && ./build.sh
