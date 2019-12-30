@@ -176,16 +176,9 @@ RUN . ${EMSDK}/emsdk_set_env.sh  \
     && cd / \
     && rm -rf /tmp/emscripten_test
 
-# Make sure we run the right code
-ARG VER=3
-RUN cd /core && git pull
-
 # Rebuild boost under wasm
 RUN rm -rf /core/Common/3dParty/boost/boost_1_58_0
 RUN cd /core/Common/3dParty/boost/ && ./fetch.sh && ./build.sh && /emsdk/upstream/bin/llvm-ranlib /core/Common/3dParty/boost/boost_1_58_0/build/linux_32/static/libboost_regex.a
-
-# Build the 3rd party dependencies
-RUN cd /core/Common/3dParty/icu && ./fetch.sh && ./build.sh
 
 # Preparing emscripten build
 RUN update-alternatives --install /usr/bin/gcc gcc /emsdk/upstream/emscripten/emcc 20 \
@@ -195,5 +188,13 @@ RUN update-alternatives --install /usr/bin/gcc gcc /emsdk/upstream/emscripten/em
     && update-alternatives --install /usr/bin/ar ar /emsdk/upstream/bin/llvm-ar 20 \
     && update-alternatives --install /usr/bin/rc rc /emsdk/upstream/bin/llvm-rc 20
 RUN cd /core && make x2t
+
+# Make sure we run the right code
+ARG VER=5
+RUN cd /core && git pull
+
 # Final WebAssembly Build
 RUN cd /core && ./make.sh
+
+# Test run xt2.js
+RUN cd /core && ./c2xlsx.sh cryptpad.bin && ./cfromxlsx.sh cryptpad.bin.xlsx
