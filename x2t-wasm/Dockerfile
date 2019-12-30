@@ -2,6 +2,8 @@
 # https://helpcenter.onlyoffice.com/server/linux/document/compile-source-code.aspx,
 # which hallows to build the complete OnlyOffice Document Server
 # We tweak it a bit so that we build only the tool that we are looking for (x2t) 
+LABEL Description="This image is used to build onlyoffice x2t.js" Version="5.2.6-1"
+
 from ubuntu:xenial
 
 run apt-get update
