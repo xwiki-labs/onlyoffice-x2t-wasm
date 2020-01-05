@@ -2,9 +2,8 @@
 # https://helpcenter.onlyoffice.com/server/linux/document/compile-source-code.aspx,
 # which hallows to build the complete OnlyOffice Document Server
 # We tweak it a bit so that we build only the tool that we are looking for (x2t) 
-LABEL Description="This image is used to build onlyoffice x2t.js" Version="5.2.6-1"
-
 from ubuntu:xenial
+LABEL Description="This image is used to build onlyoffice x2t.js" Version="5.4.2-1"
 
 run apt-get update
 run apt-get install --force-yes -yq \
@@ -28,7 +27,7 @@ run apt-get install --force-yes -yq \
 
 # Use the ldubost OnlyOffice core with the wasm branch
 run git clone https://github.com/ldubost/core.git \
-    && cd core && git checkout wasm32-5.2.6
+    && cd core && git checkout wasm32-5.4.2
 
 # Add a target for the build only for x2t and its dependencies
 run echo "x2t: \$(X2T)" >> core/Makefile
