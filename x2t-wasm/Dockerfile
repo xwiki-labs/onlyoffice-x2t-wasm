@@ -40,7 +40,7 @@ run tail core/Makefile
 
 # Supports only 1.38.40+, accpets also '-upstream' variants
 ARG EMSCRIPTEN_VERSION=1.39.4
-ARG EMSDK_CHANGESET=master
+ARG EMSDK_CHANGESET=2c1cb5a2be454d3806a5eb4e7e23959a9ebcf8dd
 # ------------------------------------------------------------------------------
 
 ENV EMSDK /emsdk
@@ -176,6 +176,9 @@ RUN . ${EMSDK}/emsdk_set_env.sh  \
     && em++ test.cpp -o test.js && nodejs test.js \
     && cd / \
     && rm -rf /tmp/emscripten_test
+
+# Replace icu port to fix download issue
+COPY icu.py /emsdk/upstream/emscripten/tools/ports/icu.py
 
 # Rebuild boost under wasm
 RUN rm -rf /core/Common/3dParty/boost/boost_1_58_0
