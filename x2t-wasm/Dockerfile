@@ -26,7 +26,7 @@ run apt-get install --force-yes -yq \
     subversion
 
 # Use the ldubost OnlyOffice core with the wasm branch
-run git clone https://github.com/ldubost/core.git \
+run git clone https://github.com/xwiki-labs/core.git \
     && cd core && git checkout wasm32-5.4.2
 
 # Add a target for the build only for x2t and its dependencies
