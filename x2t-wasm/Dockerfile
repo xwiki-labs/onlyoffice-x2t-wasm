@@ -3,7 +3,7 @@
 # which hallows to build the complete OnlyOffice Document Server
 # We tweak it a bit so that we build only the tool that we are looking for (x2t) 
 from ubuntu:xenial
-LABEL Description="This image is used to build onlyoffice x2t.js" Version="5.4.2-1"
+LABEL Description="This image is used to build onlyoffice x2t.js" Version="5.4.6-1"
 
 run apt-get update
 run apt-get install --force-yes -yq \
@@ -27,7 +27,7 @@ run apt-get install --force-yes -yq \
 
 # Use the ldubost OnlyOffice core with the wasm branch
 run git clone https://github.com/xwiki-labs/core.git \
-    && cd core && git checkout wasm32-5.4.2
+    && cd core && git checkout wasm-5.4.6-pdf
 
 # Add a target for the build only for x2t and its dependencies
 run echo "x2t: \$(X2T)" >> core/Makefile
@@ -183,6 +183,9 @@ COPY icu.py /emsdk/upstream/emscripten/tools/ports/icu.py
 # Rebuild boost under wasm
 RUN rm -rf /core/Common/3dParty/boost/boost_1_58_0
 RUN cd /core/Common/3dParty/boost/ && ./fetch.sh && ./build.sh && /emsdk/upstream/bin/llvm-ranlib /core/Common/3dParty/boost/boost_1_58_0/build/linux_32/static/libboost_regex.a
+
+RUN cd /core/Common/3dParty/v8/ && ./fetch.sh
+# NOTE: maybe we also need      && ./build.sh
 
 # Preparing emscripten build
 RUN update-alternatives --install /usr/bin/gcc gcc /emsdk/upstream/emscripten/emcc 20 \
